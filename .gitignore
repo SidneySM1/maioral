@@ -1,0 +1,31 @@
+# Dependências (Nunca enviar, o Vercel instala-as sozinho)
+/node_modules
+/.pnp
+.pnp.js
+
+# Testes e Cobertura
+/coverage
+
+# Build (Pasta gerada pelo 'npm run build')
+/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Variáveis de Ambiente (Se decidires usar um ficheiro .env no futuro)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Configurações de Editores (VS Code, etc)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

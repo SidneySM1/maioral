@@ -1,0 +1,103 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Efeito Holográfico Mercy */
+.card-mercy {
+  width: 250px;
+  aspect-ratio: 3 / 4;
+  background: #fff;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(240, 179, 35, 0.2);
+  transition: transform 0.1s ease-out;
+  transform-style: preserve-3d;
+  border: 2px solid rgba(240, 179, 35, 0.3);
+}
+
+.holo-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at calc(50% + var(--ratio-x) * 50%) calc(50% + var(--ratio-y) * 50%),
+    rgba(240, 179, 35, 0.4) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.circles-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#F0B323 0.5px, transparent 0.5px);
+  background-size: 10px 10px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.card-content {
+  z-index: 2;
+  width: 100%;
+  text-align: center;
+}
+
+.sig-img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(240, 179, 35, 0.5));
+}
+
+.msg-text {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 10px 0;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limite de 3 linhas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
