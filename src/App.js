@@ -18,30 +18,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- COMPONENTE: CARD HOLOGRÁFICO ---
+// --- COMPONENTE: CARD HOLOGRÁFICO (MOUSE + TOUCH) ---
 const CardHolografico = ({ item, onDelete, onSelect, isActive }) => {
   const cardRef = useRef(null);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = (e) => {
+  const handleMove = (clientX, clientY) => {
     const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
-    const y = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+    const x = (clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+    const y = (clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
     setCoords({ x, y });
   };
 
+  const resetCoords = () => setCoords({ x: 0, y: 0 });
+
   return (
-    <div 
+    <div
       className={`card-mercy ${isActive ? 'card-glow-active' : ''}`}
-      ref={cardRef} 
-      onMouseMove={handleMouseMove} 
-      onMouseLeave={() => setCoords({ x: 0, y: 0 })}
+      ref={cardRef}
+      onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
+      onMouseLeave={resetCoords}
+      onTouchMove={(e) => handleMove(e.touches[0].clientX, e.touches[0].clientY)}
+      onTouchEnd={resetCoords}
       onClick={() => onSelect(item)}
       style={{
         transform: `perspective(1000px) rotateY(${coords.x * 15}deg) rotateX(${-coords.y * 15}deg)`,
         '--ratio-x': coords.x,
         '--ratio-y': coords.y,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        touchAction: 'none'
       }}
     >
       <div className="holo-bg" />
@@ -50,8 +55,8 @@ const CardHolografico = ({ item, onDelete, onSelect, isActive }) => {
         <img src={item.assinatura} className="sig-img" alt="Assinatura" />
         <p className="msg-text">"{item.mensagem}"</p>
       </div>
-      <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', zIndex: 3}}>
-        <strong style={{color: '#F0B323', fontSize: '0.9rem'}}>{item.convidado}</strong>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', zIndex: 3 }}>
+        <strong style={{ color: '#F0B323', fontSize: '0.9rem' }}>{item.convidado}</strong>
         {localStorage.getItem(`owner_${item.id}`) === item.token && (
           <Trash2 size={18} color="#ff4b5c" onClick={(e) => { e.stopPropagation(); onDelete(e, item.id, item.token); }} />
         )}
@@ -73,21 +78,17 @@ function App() {
   const [memeCoords, setMemeCoords] = useState({ x: 0, y: 0 });
   const sigCanvas = useRef({});
 
-  // 1. Pedir permissão de localização ASSIM QUE ENTRAR
+  // 1. Geolocalização Antecipada
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLocation(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
-        },
-        () => {
-          setUserLocation("Não permitida");
-        }
+        (pos) => setUserLocation(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`),
+        () => setUserLocation("Não permitida")
       );
     }
   }, []);
 
-  // 2. Brilho Sequencial
+  // 2. Brilho Sequencial (Cards)
   useEffect(() => {
     if (assinaturas.length === 0) return;
     const interval = setInterval(() => {
@@ -96,7 +97,7 @@ function App() {
     return () => clearInterval(interval);
   }, [assinaturas]);
 
-  // 3. Firebase Realtime
+  // 3. Realtime Database
   useEffect(() => {
     const q = query(collection(db, "assinaturas"), orderBy("data", "desc"));
     return onSnapshot(q, (snapshot) => {
@@ -104,9 +105,14 @@ function App() {
     });
   }, []);
 
+  const handleMemeMove = (clientX, clientY) => {
+    const x = (clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+    const y = (clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+    setMemeCoords({ x, y });
+  };
+
   const salvar = async () => {
     if (sigCanvas.current.isEmpty() || !nome || !mensagem) return alert("Preencha tudo!");
-
     const senha = prompt("Digite a Chave de Acesso:");
     if (senha !== "amaioral") return alert("Acesso negado! ❌");
 
@@ -120,17 +126,16 @@ function App() {
         assinatura: imagem,
         data: new Date(),
         token: meuToken,
-        local: userLocation // Usa a localização capturada no início
+        local: userLocation
       });
 
       localStorage.setItem(`owner_${docRef.id}`, meuToken);
       setNome(""); setMensagem(""); setModalAberta(false);
-    } catch (e) {
-      alert("Erro ao conectar ao Firebase!");
-    }
+    } catch (e) { alert("Erro ao conectar ao Firebase!"); }
   };
 
   const apagar = async (e, id, tokenRemoto) => {
+    e.stopPropagation();
     if (localStorage.getItem(`owner_${id}`) === tokenRemoto) {
       if (window.confirm("Deseja remover sua marca do mural?")) {
         await deleteDoc(doc(db, "assinaturas", id));
@@ -140,23 +145,24 @@ function App() {
 
   return (
     <div className="app-container" style={styles.appBody}>
-      
+
+      {/* Botão Flutuante Meme */}
       <div onClick={() => setMemeAberto(true)} style={styles.memeButton}>
-        <img src="/lady.png" alt="Meme" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+        <img src="/lady.png" alt="Meme" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
 
-      <header style={{textAlign: 'center', marginBottom: '50px'}}>
+      <header style={{ textAlign: 'center', marginBottom: '50px' }}>
         <Heart fill="#F0B323" color="#F0B323" size={40} />
         <h1 style={styles.mainTitle}>MURAL DA MAIORAL</h1>
-        <p style={{color: '#888'}}>Feliz "Calma amiga, ninguém esta vendo!"</p>
+        <p style={{ color: '#888' }}>Feliz "Calma amiga, ninguém esta vendo!✨✨"</p>
       </header>
 
       <div style={styles.grid}>
         {assinaturas.map((item, index) => (
-          <CardHolografico 
-            key={item.id} 
-            item={item} 
-            onDelete={apagar} 
+          <CardHolografico
+            key={item.id}
+            item={item}
+            onDelete={apagar}
             onSelect={setDetalheSeleccionado}
             isActive={index === activeIndex}
           />
@@ -171,13 +177,13 @@ function App() {
       {modalAberta && (
         <div style={styles.overlay}>
           <div style={styles.modalContent}>
-            <h2 style={{color: '#F0B323', marginTop: 0}}>Nova Assinatura</h2>
+            <h2 style={{ color: '#F0B323', marginTop: 0 }}>Nova Assinatura</h2>
             <input className="modal-input-field" placeholder="Seu Nome" value={nome} onChange={e => setNome(e.target.value)} />
-            <textarea className="modal-input-field" style={{height: '80px', resize: 'none'}} placeholder="Mensagem..." value={mensagem} onChange={e => setMensagem(e.target.value)} maxLength={100} />
+            <textarea className="modal-input-field" style={{ height: '80px', resize: 'none' }} placeholder="Mensagem..." value={mensagem} onChange={e => setMensagem(e.target.value)} maxLength={100} />
             <div className="canvas-wrapper">
-              <SignatureCanvas ref={sigCanvas} penColor='#F0B323' backgroundColor='#ffffff' canvasProps={{width: 300, height: 150, className: 'sigCanvas', style: { maxWidth: '100%' }}} />
+              <SignatureCanvas ref={sigCanvas} penColor='#F0B323' backgroundColor='#ffffff' canvasProps={{ width: 300, height: 150, className: 'sigCanvas', style: { maxWidth: '100%' } }} />
             </div>
-            <div style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
               <button onClick={() => setModalAberta(false)} style={styles.btnSec}>Sair</button>
               <button onClick={salvar} style={styles.btnPri}>Enviar ✨</button>
             </div>
@@ -185,39 +191,61 @@ function App() {
         </div>
       )}
 
-      {/* MODAL: DETALHES */}
+      {/* MODAL: DETALHES (ZOOM) */}
+      {/* MODAL: DETALHES (ZOOM) */}
       {detalheSeleccionado && (
         <div style={styles.overlay} onClick={() => setDetalheSeleccionado(null)}>
           <div style={styles.detailModal} onClick={e => e.stopPropagation()}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-               <h2 style={{color: '#F0B323', margin: 0}}>{detalheSeleccionado.convidado}</h2>
-               <X onClick={() => setDetalheSeleccionado(null)} style={{cursor: 'pointer'}} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ color: '#F0B323', margin: 0 }}>{detalheSeleccionado.convidado}</h2>
+              <X onClick={() => setDetalheSeleccionado(null)} style={{ cursor: 'pointer' }} />
             </div>
-            <hr style={{margin: '15px 0', border: '0.5px solid #eee'}} />
+            <hr style={{ margin: '15px 0', border: '0.5px solid #eee' }} />
+
             <img src={detalheSeleccionado.assinatura} className="detail-modal-img" alt="Zoom" />
-            <p style={{fontSize: '1.2rem', fontStyle: 'italic', margin: '20px 0'}}>"{detalheSeleccionado.mensagem}"</p>
-            <div style={{display: 'flex', alignItems: 'center', color: '#888', fontSize: '0.8rem'}}>
-              <MapPin size={14} style={{marginRight: '5px'}} />
-              Local: {detalheSeleccionado.local}
+
+            <p style={{ fontSize: '1.2rem', fontStyle: 'italic', margin: '20px 0' }}>
+              "{detalheSeleccionado.mensagem}"
+            </p>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', color: '#888', fontSize: '0.8rem' }}>
+                <MapPin size={14} style={{ marginRight: '5px' }} />
+                Local: {detalheSeleccionado.local}
+              </div>
+
+              {/* BOTÃO MAPS MINIMALISTA */}
+              {detalheSeleccionado.local !== "Não informada" && detalheSeleccionado.local !== "Não permitida" && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${detalheSeleccionado.local}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={styles.mapsBtn}
+                >
+                  maps 📍
+                </a>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* MODAL: MEME */}
+      {/* MODAL: MEME (TOUCH 3D ATIVO) */}
       {memeAberto && (
-        <div style={styles.overlay} onClick={() => setMemeAberto(false)} onMouseMove={(e) => {
-          const x = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
-          const y = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
-          setMemeCoords({ x, y });
-        }}>
+        <div style={styles.overlay}
+          onClick={() => setMemeAberto(false)}
+          onMouseMove={(e) => handleMemeMove(e.clientX, e.clientY)}
+          onTouchMove={(e) => handleMemeMove(e.touches[0].clientX, e.touches[0].clientY)}
+          onTouchEnd={() => setMemeCoords({ x: 0, y: 0 })}
+        >
           <div style={{
             ...styles.memeCard,
-            transform: `perspective(1000px) rotateY(${memeCoords.x * 25}deg) rotateX(${-memeCoords.y * 25}deg)`
+            transform: `perspective(1000px) rotateY(${memeCoords.x * 25}deg) rotateX(${-memeCoords.y * 25}deg)`,
+            touchAction: 'none'
           }}>
-            <div className="holo-bg" style={{opacity: 0.7}} />
-            <img src="/lady.png" alt="Meme" style={{width: '100%', borderRadius: '15px'}} />
-            <h3 style={{color: '#F0B323', margin: '15px 0 5px 0'}}>Chama de senhora! 😎</h3>
+            <div className="holo-bg" style={{ opacity: 0.7 }} />
+            <img src="/lady.png" alt="Meme" style={{ width: '100%', borderRadius: '15px' }} />
+            <h3 style={{ color: '#F0B323', margin: '15px 0 5px 0' }}>Chama de senhora! 😎</h3>
           </div>
         </div>
       )}
@@ -225,18 +253,32 @@ function App() {
   );
 }
 
+// --- ESTILOS ---
 const styles = {
   appBody: { minHeight: '100vh', padding: '40px 20px', background: 'radial-gradient(circle, #ffffff, #fff9ea)' },
-  mainTitle: { color: '#F0B323', letterSpacing: '4px', fontSize: '2.2rem', margin: '10px 0' },
+  mainTitle: { color: '#F0B323', letterSpacing: '4px', fontSize: '2.2rem', margin: '10px 0', textAlign: 'center' },
   grid: { display: 'flex', flexWrap: 'wrap', gap: '30px', justifyContent: 'center' },
-  fab: { position: 'fixed', bottom: '30px', right: '30px', width: '65px', height: '65px', borderRadius: '50%', backgroundColor: '#F0B323', border: 'none', cursor: 'pointer', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' },
+  fab: { position: 'fixed', bottom: '30px', right: '30px', width: '65px', height: '65px', borderRadius: '50%', backgroundColor: '#F0B323', border: 'none', cursor: 'pointer', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', boxShadow: '0 10px 20px rgba(240,179,35,0.4)' },
   memeButton: { position: 'fixed', bottom: '30px', left: '30px', width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #F0B323', overflow: 'hidden', cursor: 'pointer', zIndex: 90, backgroundColor: '#fff' },
   overlay: { position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, backdropFilter: 'blur(4px)' },
-  modalContent: { background: 'white', padding: '30px', borderRadius: '25px', width: '95%', maxWidth: '400px' },
+  modalContent: { background: 'white', padding: '30px', borderRadius: '25px', width: '95%', maxWidth: '400px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' },
   detailModal: { background: 'white', padding: '30px', borderRadius: '25px', width: '95%', maxWidth: '500px' },
   btnPri: { flex: 2, padding: '12px', borderRadius: '12px', border: 'none', backgroundColor: '#F0B323', color: 'white', fontWeight: 'bold', cursor: 'pointer' },
   btnSec: { flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #eee', backgroundColor: '#fff', cursor: 'pointer' },
-  memeCard: { background: 'white', padding: '25px', borderRadius: '30px', textAlign: 'center', maxWidth: '350px', border: '5px solid #F0B323', position: 'relative', overflow: 'hidden' }
+  memeCard: { background: 'white', padding: '25px', borderRadius: '30px', textAlign: 'center', maxWidth: '350px', border: '5px solid #F0B323', position: 'relative', overflow: 'hidden', transition: 'transform 0.1s ease-out' },
+  mapsBtn: {
+    backgroundColor: '#f8f8f8',
+    color: '#F0B323',
+    padding: '5px 10px',
+    borderRadius: '8px',
+    fontSize: '0.75rem',
+    textDecoration: 'none',
+    border: '1px solid #eee',
+    fontWeight: '500',
+    transition: 'all 0.2s',
+    display: 'inline-flex',
+    alignItems: 'center'
+  },
 };
 
 export default App;
