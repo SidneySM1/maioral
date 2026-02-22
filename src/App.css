@@ -101,3 +101,52 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Animação de Brilho Sequencial */
+@keyframes glow-pulse {
+  0% { box-shadow: 0 8px 24px rgba(240, 179, 35, 0.15); border-color: rgba(240, 179, 35, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(240, 179, 35, 0.6); border-color: #F0B323; }
+  100% { box-shadow: 0 8px 24px rgba(240, 179, 35, 0.15); border-color: rgba(240, 179, 35, 0.3); }
+}
+
+.card-glow-active {
+  animation: glow-pulse 1s ease-in-out;
+}
+
+/* Detalhes da Modal de Detalhes */
+.detail-modal-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 15px;
+  border: 1px solid #eee;
+}
+
+
+/* Garante que todos os elementos respeitem a largura máxima */
+* {
+  box-sizing: border-box;
+}
+
+/* Ajuste específico para os campos da modal */
+.modal-input-field {
+  width: 100%; /* Agora o 100% não vai transbordar */
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-family: inherit;
+  display: block; /* Garante que ocupem a linha toda */
+}
+
+/* Ajuste do container da assinatura para não vazar */
+.canvas-wrapper {
+  width: 100%;
+  border: 2px dashed #F0B323;
+  border-radius: 15px;
+  overflow: hidden; /* Corta qualquer excesso do canvas */
+  background: #fff;
+  display: flex;
+  justify-content: center;
+}
