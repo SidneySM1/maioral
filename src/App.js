@@ -154,7 +154,7 @@ function App() {
       <header style={{ textAlign: 'center', marginBottom: '50px' }}>
         <Heart fill="#F0B323" color="#F0B323" size={40} />
         <h1 style={styles.mainTitle}>MURAL DA MAIORAL</h1>
-        <p style={{ color: '#888' }}>Feliz "Calma amiga, ninguém esta vendo!✨✨"</p>
+        <p style={{ color: '#888' }}>Feliz "Calma amiga, ninguém tá vendo✨"</p>
       </header>
 
       <div style={styles.grid}>
