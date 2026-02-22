@@ -87,10 +87,19 @@ function App() {
   }, []);
 
   const salvar = async () => {
+    // 1. Verificação básica de campos
     if (sigCanvas.current.isEmpty() || !nome || !mensagem) {
       return alert("Preencha o nome, mensagem e assinatura, recruta!");
     }
-    
+
+    // 2. Pedir a senha (Chave de Acesso)
+    const senhaInformada = prompt("Digite a Chave de Acesso para autorizar a assinatura:");
+
+    if (senhaInformada !== "amaioral") {
+      return alert("Acesso negado! Chave incorreta. ❌");
+    }
+
+    // 3. Se a senha estiver correta, prossegue com o salvamento
     try {
       const imagem = sigCanvas.current.getCanvas().toDataURL('image/png');
       const meuToken = Math.random().toString(36).substring(7);
@@ -104,9 +113,12 @@ function App() {
       });
 
       localStorage.setItem(`owner_${docRef.id}`, meuToken);
-      setNome(""); setMensagem(""); setModalAberta(false);
-      alert("Heróis nunca morrem! Assinatura enviada. ✨");
+      setNome(""); 
+      setMensagem(""); 
+      setModalAberta(false);
+      alert("Heróis nunca morrem! Assinatura autorizada e enviada. ✨");
     } catch (e) {
+      console.error(e);
       alert("Erro ao conectar ao Firebase!");
     }
   };
