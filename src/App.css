@@ -324,3 +324,42 @@ body {
     top: 5% !important;
   }
 }
+
+
+
+/* --- AVATAR CIRCULAR --- */
+.avatar-circle {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border: 2px solid white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 10;
+  transform: translateZ(30px); /* Fica acima de tudo no efeito 3D */
+}
+
+/* Ajuste no card para não sobrepor o texto */
+.card-content {
+  margin-top: 35px; /* Abre espaço para o avatar no topo */
+  z-index: 2;
+  width: 100%;
+  text-align: center;
+  transform: translateZ(25px); 
+}
+
+/* Quando expandido, o avatar pode crescer um pouco */
+.card-mercy.is-expanded .avatar-circle {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+}
