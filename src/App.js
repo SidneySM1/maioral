@@ -183,6 +183,10 @@ function App() {
       <img src="/mercy.png" className="mercy-summon" alt="Mercy Resurrection" />
     </div>
 
+    <div onClick={() => setMemeAberto(true)} style={styles.memeButton}>
+        <img src="/lady.png" alt="Meme" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      </div>
+
       <header style={{ textAlign: 'center', marginBottom: '50px' }}>
         <Heart fill="#F0B323" color="#F0B323" size={40} />
         <h1 style={styles.mainTitle}>MURAL DA MAIORAL</h1>
