@@ -259,6 +259,7 @@ function App() {
             <div className="holo-bg" style={{ opacity: 0.7 }} />
             <img src="/lady.png" alt="Meme" style={{ width: '100%', borderRadius: '15px' }} />
             <h3 style={{ color: '#F0B323', margin: '15px 0 5px 0' }}>Chama de senhora! 😎</h3>
+            <p className="meme-credits">Desenvolvido com ❤️ por Sid</p>
           </div>
         </div>
       )}
