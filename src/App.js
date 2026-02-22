@@ -60,8 +60,8 @@ const CardHolografico = ({ item, onDelete, onSelect, isActive, isExpanded, onClo
       onTouchEnd={resetCoords}
       onClick={() => !isExpanded && onSelect(item)}
       style={{
-        transform: isExpanded
-          ? 'translate(-50%, -50%)'
+        transform: isExpanded 
+          ? 'translate(-50%, -50%)' 
           : `perspective(1000px) rotateY(${coords.x * 15}deg) rotateX(${-coords.y * 15}deg)`,
         '--ratio-x': coords.x,
         '--ratio-y': coords.y,
@@ -75,20 +75,20 @@ const CardHolografico = ({ item, onDelete, onSelect, isActive, isExpanded, onClo
       </div>
 
       {isExpanded && (
-        <X
-          size={24}
-          onClick={(e) => { e.stopPropagation(); onClose(); }}
-          style={{ position: 'absolute', top: 15, right: 15, cursor: 'pointer', zIndex: 10, color: '#F0B323' }}
+        <X 
+          size={24} 
+          onClick={(e) => { e.stopPropagation(); onClose(); }} 
+          style={{ position: 'absolute', top: 15, right: 15, cursor: 'pointer', zIndex: 10, color: '#F0B323' }} 
         />
       )}
 
       <div className="holo-bg" />
       <div className="circles-overlay" />
-
+      
       <div className="card-content">
         <img src={item.assinatura} className="sig-img" alt="Assinatura" style={{ height: isExpanded ? '180px' : '120px' }} />
         <p className="msg-text" style={{ fontSize: isExpanded ? '1.1rem' : '0.85rem' }}>"{item.mensagem}"</p>
-
+        
         {isExpanded && (
           <div className="extra-info">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
@@ -97,11 +97,11 @@ const CardHolografico = ({ item, onDelete, onSelect, isActive, isExpanded, onClo
                 Local: {item.local}
               </div>
               {item.local !== "Não informada" && item.local !== "Não permitida" && (
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${item.local}`}
+                <a 
+                  href={`https://www.google.com/maps?q=${item.local}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="maps-btn"
+                  style={styles.mapsBtn}
                 >
                   maps 📍
                 </a>
@@ -192,19 +192,19 @@ function App() {
 
   return (
     <div className="app-container" style={styles.appBody}>
-
+      
       {/* Elementos da Ressurreição */}
-      <div
-        className={`resurrection-overlay ${detalheSeleccionado ? 'active' : ''}`}
-        onClick={() => setDetalheSeleccionado(null)}
-      />
+      <div 
+      className={`resurrection-overlay ${detalheSeleccionado ? 'active' : ''}`} 
+      onClick={() => setDetalheSeleccionado(null)} 
+    />
+    
+    <div className={`mercy-container ${detalheSeleccionado ? 'active' : ''}`}>
+      <div className="mercy-glow-bg" />
+      <img src="/mercy.png" className="mercy-summon" alt="Mercy Resurrection" />
+    </div>
 
-      <div className={`mercy-container ${detalheSeleccionado ? 'active' : ''}`}>
-        <div className="mercy-glow-bg" />
-        <img src="/mercy.png" className="mercy-summon" alt="Mercy Resurrection" />
-      </div>
-
-      <div onClick={() => setMemeAberto(true)} style={styles.memeButton}>
+    <div onClick={() => setMemeAberto(true)} style={styles.memeButton}>
         <img src="/lady.png" alt="Meme" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
 
@@ -250,11 +250,11 @@ function App() {
 
       {/* MODAL: MEME */}
       {memeAberto && (
-        <div style={styles.overlay}
-          onClick={() => setMemeAberto(false)}
-          onMouseMove={(e) => handleMemeMove(e.clientX, e.clientY)}
-          onTouchMove={(e) => handleMemeMove(e.touches[0].clientX, e.touches[0].clientY)}
-          onTouchEnd={() => setMemeCoords({ x: 0, y: 0 })}>
+        <div style={styles.overlay} 
+             onClick={() => setMemeAberto(false)} 
+             onMouseMove={(e) => handleMemeMove(e.clientX, e.clientY)}
+             onTouchMove={(e) => handleMemeMove(e.touches[0].clientX, e.touches[0].clientY)}
+             onTouchEnd={() => setMemeCoords({ x: 0, y: 0 })}>
           <div style={{ ...styles.memeCard, transform: `perspective(1000px) rotateY(${memeCoords.x * 25}deg) rotateX(${-memeCoords.y * 25}deg)`, touchAction: 'none' }}>
             <div className="holo-bg" style={{ opacity: 0.7 }} />
             <img src="/lady.png" alt="Meme" style={{ width: '100%', borderRadius: '15px' }} />
