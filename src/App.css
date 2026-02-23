@@ -377,3 +377,40 @@ body {
   z-index: 2;
   position: relative;
 }
+
+
+.btn-clear {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 8px;
+  width: 100%;
+  text-align: right;
+  transition: color 0.2s;
+}
+
+.btn-clear:hover {
+  color: #F0B323;
+}
+/* Este estilo já deve estar no seu CSS, ele agora servirá para ambos os botões */
+.maps-btn {
+  background-color: #f8f8f8;
+  color: #F0B323;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  text-decoration: none;
+  border: 1px solid #eee;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.maps-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+}
