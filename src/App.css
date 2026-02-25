@@ -39,6 +39,7 @@ body {
   transform-style: preserve-3d;
   border: 2px solid rgba(240, 179, 35, 0.3);
   z-index: 5;
+  will-change: transform, opacity;
 }
 
 /* O "ESPELHO" - Reflexo dinâmico holográfico */
@@ -414,3 +415,28 @@ body {
   background-color: #f0f0f0;
   transform: scale(1.05);
 }
+
+
+
+/* --- OTIMIZAÇÃO MOBILE --- */
+@media (max-width: 768px) {
+  /* Remove o blur pesado do fundo e usa apenas cor sólida com transparência */
+  
+}
+.resurrection-overlay, 
+  .cadastro-overlay {
+    backdrop-filter: none !important;
+    background: rgba(0, 0, 0, 0.9) !important; /* Um pouco mais escuro para compensar a falta do blur */
+  }
+
+  /* Desativa a perspectiva 3D no container do card para evitar bugs visuais no mobile */
+  .card-mercy {
+    transform: none !important; /* Garante que ele fique flat no mobile */
+    transition: transform 0.3s ease, box-shadow 0.3s !important;
+  }
+  
+  /* Quando expandido no mobile, força a posição fixa sem transformações 3D complexas */
+  .card-mercy.is-expanded {
+    transform: translate(-50%, -50%) !important;
+    height: auto !important;
+  }
