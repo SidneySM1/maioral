@@ -232,41 +232,41 @@ function App() {
 
 			{/* MODAL: CADASTRO */}
 			{/* MODAL: CADASTRO */}
-{modalAberta && (
-  <div className="cadastro-overlay">
-    <div className="cadastro-modal">
-      <h2 style={{ color: '#F0B323', marginTop: 0 }}>Nova Assinatura</h2>
-      <input className="modal-input-field" placeholder="Seu Nome" value={nome} onChange={e => setNome(e.target.value)} />
-      <textarea className="modal-input-field" style={{ height: '80px', resize: 'none' }} placeholder="Mensagem..." value={mensagem} onChange={e => setMensagem(e.target.value)} maxLength={100} />
-      
-      <div className="canvas-wrapper">
-        <SignatureCanvas 
-          ref={sigCanvas} 
-          penColor='#F0B323' 
-          backgroundColor='#ffffff' 
-          canvasProps={{ width: 300, height: 150, className: 'sigCanvas' }} 
-        />
-      </div>
+			{modalAberta && (
+				<div className="cadastro-overlay">
+					<div className="cadastro-modal">
+						<h2 style={{ color: '#F0B323', marginTop: 0 }}>Nova Assinatura</h2>
+						<input className="modal-input-field" placeholder="Seu Nome" value={nome} onChange={e => setNome(e.target.value)} />
+						<textarea className="modal-input-field" style={{ height: '80px', resize: 'none' }} placeholder="Mensagem..." value={mensagem} onChange={e => setMensagem(e.target.value)} maxLength={100} />
 
-      {/* BOTÃO LIMPAR ESTILIZADO IGUAL AO MAPS */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-        <button 
-          onClick={() => sigCanvas.current.clear()} 
-          className="maps-btn"
-          type="button"
-          style={{ cursor: 'pointer', border: '1px solid #eee' }}
-        >
-          limpar 🧹
-        </button>
-      </div>
+						<div className="canvas-wrapper">
+							<SignatureCanvas
+								ref={sigCanvas}
+								penColor='#F0B323'
+								backgroundColor='#ffffff'
+								canvasProps={{ width: 300, height: 150, className: 'sigCanvas' }}
+							/>
+						</div>
 
-      <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-        <button onClick={() => setModalAberta(false)} className="btn-sec">Sair</button>
-        <button onClick={salvar} className="btn-pri">Enviar ✨</button>
-      </div>
-    </div>
-  </div>
-)}
+						{/* BOTÃO LIMPAR ESTILIZADO IGUAL AO MAPS */}
+						<div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+							<button
+								onClick={() => sigCanvas.current.clear()}
+								className="maps-btn"
+								type="button"
+								style={{ cursor: 'pointer', border: '1px solid #eee' }}
+							>
+								limpar 🧹
+							</button>
+						</div>
+
+						<div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+							<button onClick={() => setModalAberta(false)} className="btn-sec">Sair</button>
+							<button onClick={salvar} className="btn-pri">Enviar ✨</button>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* MODAL: MEME */}
 			{memeAberto && (

@@ -1,14 +1,10 @@
-# 💝 Livro de Memórias Digital 💝
+# 💝 MURAL DA MAIORAL 💝
 
 > *Um presente especial feito com muito carinho*
 
 ## ✨ Sobre o Projeto
 
-Este é um aplicativo criado especialmente para guardar as mensagens e marcas de presença de todos os amigos que fizeram parte de um momento especial - um aniversário inesquecível! 
-
-Aqui estão registradas as palavras carinhosas de:
-- 🎉 Quem estava presente na festa
-- 💌 Amigos que não puderam comparecer mas enviaram seu amor de longe
+Este é um aplicativo criado especialmente para guardar as mensagens e marcas de presença de todos os amigos que fizeram parte de um momento especial - um aniversário inesquecível!
 
 Cada mensagem é uma lembrança eterna de afeto, amizade e celebração!
 
